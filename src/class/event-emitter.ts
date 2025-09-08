@@ -7,18 +7,17 @@ export class EventEmitter<Events extends Record<string, any>> {
   } = {};
 
   // 订阅
-  on<K extends keyof Events>(
-    eventName: K, 
-    handler: EventHandler<Events[K]>
-  ): void {
-    (this.listeners[eventName] ??= []).push(handler);
+  on<K extends keyof Events>(eventName: K, handler: EventHandler<Events[K]>): void {
+    if (!this.listeners[eventName]) {
+      this.listeners[eventName] = [];
+    }
+    this.listeners[eventName]!.push(handler);
   }
 
   // 取消订阅
   off<K extends keyof Events>(eventName: K, handler: EventHandler<Events[K]>): void {
     if (!this.listeners[eventName]) return;
-    this.listeners[eventName] = 
-        this.listeners[eventName]!.filter(h => h !== handler);
+    this.listeners[eventName] = this.listeners[eventName]!.filter(h => h !== handler);
   }
 
   // 发布事件
