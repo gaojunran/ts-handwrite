@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <explanation> */
-import shallowClone from "./shallowCopy";
-import { expect, test, it, describe } from "bun:test";
+import shallowClone from "./shallowClone";
+import { expect, it, describe } from "bun:test";
 
 describe("shallowClone", () => {
   it("should return the same primitive value", () => {
@@ -30,8 +30,9 @@ describe("shallowClone", () => {
 
   it("should not copy inherited properties", () => {
     class Parent {
-      inherited = "inherited";
+      [x: string]: string;
     }
+    Parent.prototype.inherited = "inherited";
     const obj = new (class extends Parent {
       own = "own";
     })();
