@@ -1,3 +1,5 @@
+import { remove } from "es-toolkit/array";
+
 // 定义事件类型
 type EventHandler<T = any> = (payload: T) => void;
 
@@ -8,16 +10,13 @@ export class EventEmitter<Events extends Record<string, any>> {
 
   // 订阅
   on<K extends keyof Events>(eventName: K, handler: EventHandler<Events[K]>): void {
-    if (!this.listeners[eventName]) {
-      this.listeners[eventName] = [];
-    }
-    this.listeners[eventName]!.push(handler);
+    (this.listeners[eventName] ??= []).push(handler);
   }
 
   // 取消订阅
   off<K extends keyof Events>(eventName: K, handler: EventHandler<Events[K]>): void {
     if (!this.listeners[eventName]) return;
-    this.listeners[eventName] = this.listeners[eventName]!.filter(h => h !== handler);
+    remove(this.listeners[eventName], h => h === handler);
   }
 
   // 发布事件
